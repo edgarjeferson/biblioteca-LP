@@ -1,44 +1,68 @@
 import tkinter as tk
 from tkinter import ttk
+from login import LoginApp
 from autores import AutoresApp
 from categorias import CategoriasApp
 from libros import LibrosApp
 from libros_autores import LibrosAutoresApp
 from prestamos import PrestamosApp
-from roles import RolesApp
 from usuarios import UsuariosApp
 
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
-
+        self.withdraw()  # Ocultar la ventana principal hasta que se pase el login
         self.title("Biblioteca")
-        self.geometry("800x600")
+        self.geometry("700x400")
 
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(expand=True, fill='both')
 
-        self.autores_app = AutoresApp(self.notebook)
-        self.notebook.add(self.autores_app, text="Autores")
+        self.after(0, self.show_login)
 
-        self.categorias_app = CategoriasApp(self.notebook)
-        self.notebook.add(self.categorias_app, text="Categorías")
+    def show_login(self):
+        login_window = LoginApp(self)
+        login_window.grab_set()
 
-        self.libros_app = LibrosApp(self.notebook)
-        self.notebook.add(self.libros_app, text="Libros")
+    def login_successful(self, user_id, role):
+        print("Login successful")
+        self.deiconify()  # Mostrar la ventana principal
+        self.user_id = user_id
+        self.role = role
 
-        self.libros_autores_app = LibrosAutoresApp(self.notebook)
-        self.notebook.add(self.libros_autores_app, text="Libros y Autores")
+        self.label_user_info = tk.Label(self, text=f"Usuario: {self.user_id} - Rol: {self.role}")
+        self.label_user_info.pack(pady=10)
 
-        self.prestamos_app = PrestamosApp(self.notebook)
-        self.notebook.add(self.prestamos_app, text="Préstamos")
+        if self.role == "admin":
+            print("Admin role detected")
+            self.autores_app = AutoresApp(self.notebook)
+            self.notebook.add(self.autores_app, text="Autores")
 
-        self.roles_app = RolesApp(self.notebook)
-        self.notebook.add(self.roles_app, text="Roles")
+            self.categorias_app = CategoriasApp(self.notebook)
+            self.notebook.add(self.categorias_app, text="Categorías")
 
-        self.usuarios_app = UsuariosApp(self.notebook)
-        self.notebook.add(self.usuarios_app, text="Usuarios")
+            self.libros_app = LibrosApp(self.notebook)
+            self.notebook.add(self.libros_app, text="Libros")
+
+            self.libros_autores_app = LibrosAutoresApp(self.notebook)
+            self.notebook.add(self.libros_autores_app, text="Libros y Autores")
+
+            self.prestamos_app = PrestamosApp(self.notebook)
+            self.notebook.add(self.prestamos_app, text="Préstamos")
+
+            print("Creating UsuariosApp instance")
+            self.usuarios_app = UsuariosApp(self.notebook)
+            print("UsuariosApp instance created")
+            self.notebook.add(self.usuarios_app, text="Usuarios")
+            print("UsuariosApp added to notebook")
+        else:
+            self.libros_app = LibrosApp(self.notebook)
+            self.notebook.add(self.libros_app, text="Libros")
+
+            self.prestamos_app = PrestamosApp(self.notebook)
+            self.notebook.add(self.prestamos_app, text="Préstamos")
 
 if __name__ == "__main__":
+    print("Starting MainApp")
     app = MainApp()
     app.mainloop()
