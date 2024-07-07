@@ -11,7 +11,8 @@ def create_tables():
         NOMBRES TEXT NOT NULL,
         APELLIDOS TEXT NOT NULL,
         DNI TEXT NOT NULL,
-        NACIONALIDAD TEXT NOT NULL
+        MODALIDAD TEXT NOT NULL,
+        AUTORESCOL TEXT NOT NULL
     )
     ''')
 
@@ -19,20 +20,26 @@ def create_tables():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS categorias (
         idcategoria INTEGER PRIMARY KEY,
-        NOMBRE TEXT NOT NULL
+        NOMBRE_CATEGORIA TEXT NOT NULL,
+        UBICACION TEXT NOT NULL
     )
     ''')
-
+    
     # Crear tabla libros
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS libros (
         idlibro INTEGER PRIMARY KEY,
         TITULO TEXT NOT NULL,
-        idcategoria INTEGER,
-        FOREIGN KEY (idcategoria) REFERENCES categorias(idcategoria)
+        AUTORES TEXT NOT NULL,
+        EDICION TEXT NOT NULL,
+        DESCRIPCION TEXT NOT NULL,
+        AÑO TEXT NOT NULL,
+        NUMEROPAGINAS INTEGER NOT NULL,
+        CATEGORIA_IDCATEGORIA INTEGER,
+        FOREIGN KEY (CATEGORIA_IDCATEGORIA) REFERENCES categorias(idcategoria)
     )
     ''')
-
+    
     # Crear tabla libros_autores
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS libros_autores (
@@ -57,29 +64,30 @@ def create_tables():
     )
     ''')
 
-    # Crear tabla roles
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS roles (
-        idrol INTEGER PRIMARY KEY,
-        NOMBRE TEXT NOT NULL
-    )
-    ''')
-
     # Crear tabla usuarios
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS usuarios (
-        idusuario INTEGER PRIMARY KEY,
-        NOMBRES TEXT NOT NULL,
-        APELLIDOS TEXT NOT NULL,
-        EMAIL TEXT NOT NULL,
-        idrol INTEGER,
-        FOREIGN KEY (idrol) REFERENCES roles(idrol)
-    )
+        CREATE TABLE IF NOT EXISTS usuarios (
+            idusuario INTEGER PRIMARY KEY AUTOINCREMENT,
+            DNI TEXT NOT NULL,
+            NOMBRES TEXT NOT NULL,
+            APELLIDOS TEXT NOT NULL,
+            IMAGEN BLOB,
+            DIRECCION TEXT NOT NULL,
+            CELULAR TEXT NOT NULL
+        )
     ''')
+
+    # Verificar si la columna IMAGEN existe en la tabla usuarios
+    cursor.execute("PRAGMA table_info(usuarios)")
+    columns = cursor.fetchall()
+    column_names = [column[1] for column in columns]
+    
+    if 'IMAGEN' not in column_names:
+        cursor.execute("ALTER TABLE usuarios ADD COLUMN IMAGEN BLOB")
 
     connection.commit()
     connection.close()
 
 if __name__ == "__main__":
     create_tables()
-    print("Tablas creadas exitosamente.")
+    print("Tablas creadas o actualizadas exitosamente.")
