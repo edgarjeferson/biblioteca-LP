@@ -1,3 +1,4 @@
+# main.py
 import tkinter as tk
 from tkinter import ttk
 from login import LoginApp
@@ -28,7 +29,7 @@ class MainApp(tk.Tk):
         print("Login successful")
         self.deiconify()  # Mostrar la ventana principal
         self.user_id = user_id
-        self.role = role
+        self.role = role  # Asignar el rol
 
         self.label_user_info = tk.Label(self, text=f"Usuario: {self.user_id} - Rol: {self.role}")
         self.label_user_info.pack(pady=10)
@@ -41,13 +42,13 @@ class MainApp(tk.Tk):
             self.categorias_app = CategoriasApp(self.notebook)
             self.notebook.add(self.categorias_app, text="Categorías")
 
-            self.libros_app = LibrosApp(self.notebook)
+            self.libros_app = LibrosApp(self.notebook, self.role)
             self.notebook.add(self.libros_app, text="Libros")
 
             self.libros_autores_app = LibrosAutoresApp(self.notebook)
             self.notebook.add(self.libros_autores_app, text="Libros y Autores")
 
-            self.prestamos_app = PrestamosApp(self.notebook)
+            self.prestamos_app = PrestamosApp(self.notebook, self.role)
             self.notebook.add(self.prestamos_app, text="Préstamos")
 
             print("Creating UsuariosApp instance")
@@ -55,11 +56,16 @@ class MainApp(tk.Tk):
             print("UsuariosApp instance created")
             self.notebook.add(self.usuarios_app, text="Usuarios")
             print("UsuariosApp added to notebook")
-        else:
-            self.libros_app = LibrosApp(self.notebook)
+
+        elif self.role == "estudiante":
+            self.libros_app = LibrosApp(self.notebook, self.role)
             self.notebook.add(self.libros_app, text="Libros")
 
-            self.prestamos_app = PrestamosApp(self.notebook)
+        else:  # Bibliotecario
+            self.libros_app = LibrosApp(self.notebook, self.role)
+            self.notebook.add(self.libros_app, text="Libros")
+
+            self.prestamos_app = PrestamosApp(self.notebook, self.role)
             self.notebook.add(self.prestamos_app, text="Préstamos")
 
 if __name__ == "__main__":
