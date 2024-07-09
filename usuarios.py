@@ -8,28 +8,33 @@ class UsuariosApp(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        # Agregar campo de búsqueda
-        search_frame = ttk.Frame(self)
-        search_frame.pack(pady=10)
+        # Agregar campo de búsqueda en un LabelFrame
+        search_frame = ttk.LabelFrame(self, text="Buscar Usuario")
+        search_frame.pack(pady=10, padx=10, fill='x')
+        
         search_label = ttk.Label(search_frame, text="Buscar:")
         search_label.pack(side=tk.LEFT, padx=5)
+        
         self.search_entry = ttk.Entry(search_frame)
         self.search_entry.pack(side=tk.LEFT, padx=5)
+        
         search_button = ttk.Button(search_frame, text="Buscar", command=self.search_usuario)
         search_button.pack(side=tk.LEFT, padx=5)
         
-        # Agregar botón para mostrar todos los usuarios
         show_all_button = ttk.Button(search_frame, text="Mostrar Todos", command=self.show_all_usuarios)
         show_all_button.pack(side=tk.LEFT, padx=5)
 
-        # Botón para convertir a Excel
-        convert_button = ttk.Button(search_frame, text="Convertir a Excel", command=self.export_to_excel)
-        convert_button.pack(side=tk.RIGHT, padx=5)
+        # Botones de Importar y Exportar
+        import_export_frame = ttk.Frame(search_frame)
+        import_export_frame.pack(side=tk.RIGHT)
+        
+        import_button = ttk.Button(import_export_frame, text="Importar desde Excel", command=self.import_from_excel)
+        import_button.pack(side=tk.LEFT, padx=5)
+        
+        convert_button = ttk.Button(import_export_frame, text="Convertir a Excel", command=self.export_to_excel)
+        convert_button.pack(side=tk.LEFT, padx=5)
 
-        # Botón para importar desde Excel
-        import_button = ttk.Button(search_frame, text="Importar desde Excel", command=self.import_from_excel)
-        import_button.pack(side=tk.RIGHT, padx=5)
-
+        # Configuración del Treeview
         self.tree = ttk.Treeview(self, columns=('idusuario', 'DNI', 'NOMBRES', 'APELLIDOS', 'IMAGEN', 'DIRECCION', 'CELULAR'), show='headings')
         self.tree.heading('idusuario', text='ID')
         self.tree.heading('DNI', text='DNI')
@@ -38,8 +43,9 @@ class UsuariosApp(ttk.Frame):
         self.tree.heading('IMAGEN', text='Imagen')
         self.tree.heading('DIRECCION', text='Dirección')
         self.tree.heading('CELULAR', text='Celular')
-        self.tree.pack(expand=True, fill='both')
+        self.tree.pack(expand=True, fill='both', pady=10)
 
+        # Botón de Agregar Usuario
         self.add_button = ttk.Button(self, text="Agregar", command=self.open_add_usuario_window)
         self.add_button.pack(pady=10)
 
@@ -91,31 +97,34 @@ class UsuariosApp(ttk.Frame):
         add_usuario_window = tk.Toplevel(self)
         add_usuario_window.title("Agregar Usuario")
 
-        ttk.Label(add_usuario_window, text="DNI:").grid(row=0, column=0, padx=10, pady=10)
-        dni_entry = ttk.Entry(add_usuario_window)
+        form_frame = ttk.Frame(add_usuario_window)
+        form_frame.pack(pady=10, padx=10)
+
+        ttk.Label(form_frame, text="DNI:").grid(row=0, column=0, padx=10, pady=10)
+        dni_entry = ttk.Entry(form_frame)
         dni_entry.grid(row=0, column=1, padx=10, pady=10)
         
-        ttk.Label(add_usuario_window, text="Nombres:").grid(row=1, column=0, padx=10, pady=10)
-        nombres_entry = ttk.Entry(add_usuario_window)
+        ttk.Label(form_frame, text="Nombres:").grid(row=1, column=0, padx=10, pady=10)
+        nombres_entry = ttk.Entry(form_frame)
         nombres_entry.grid(row=1, column=1, padx=10, pady=10)
         
-        ttk.Label(add_usuario_window, text="Apellidos:").grid(row=2, column=0, padx=10, pady=10)
-        apellidos_entry = ttk.Entry(add_usuario_window)
+        ttk.Label(form_frame, text="Apellidos:").grid(row=2, column=0, padx=10, pady=10)
+        apellidos_entry = ttk.Entry(form_frame)
         apellidos_entry.grid(row=2, column=1, padx=10, pady=10)
         
-        ttk.Label(add_usuario_window, text="Imagen:").grid(row=3, column=0, padx=10, pady=10)
-        imagen_button = ttk.Button(add_usuario_window, text="Seleccionar Imagen", command=lambda: self.select_image(add_usuario_window))
+        ttk.Label(form_frame, text="Imagen:").grid(row=3, column=0, padx=10, pady=10)
+        imagen_button = ttk.Button(form_frame, text="Seleccionar Imagen", command=lambda: self.select_image(add_usuario_window))
         imagen_button.grid(row=3, column=1, padx=10, pady=10)
         
-        ttk.Label(add_usuario_window, text="Dirección:").grid(row=4, column=0, padx=10, pady=10)
-        direccion_entry = ttk.Entry(add_usuario_window)
+        ttk.Label(form_frame, text="Dirección:").grid(row=4, column=0, padx=10, pady=10)
+        direccion_entry = ttk.Entry(form_frame)
         direccion_entry.grid(row=4, column=1, padx=10, pady=10)
         
-        ttk.Label(add_usuario_window, text="Celular:").grid(row=5, column=0, padx=10, pady=10)
-        celular_entry = ttk.Entry(add_usuario_window)
+        ttk.Label(form_frame, text="Celular:").grid(row=5, column=0, padx=10, pady=10)
+        celular_entry = ttk.Entry(form_frame)
         celular_entry.grid(row=5, column=1, padx=10, pady=10)
         
-        save_button = ttk.Button(add_usuario_window, text="Guardar", 
+        save_button = ttk.Button(form_frame, text="Guardar", 
                                  command=lambda: self.save_usuario(
                                      add_usuario_window,
                                      dni_entry.get(),
